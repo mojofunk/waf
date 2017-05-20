@@ -176,6 +176,9 @@ def parse_flags(self, line, uselib_store, env=None, force_static=False, posix=No
 		elif x.startswith('/LIBPATH:'):
 			prefix = 'STLIBPATH' if (force_static or static) else 'LIBPATH'
 			appu(prefix, x.replace('/LIBPATH:', ''))
+		elif x.startswith('/libpath:'):
+			prefix = 'STLIBPATH' if (force_static or static) else 'LIBPATH'
+			appu(prefix, x.replace('/libpath:', ''))
 		elif x.startswith('-std='):
 			prefix = 'CXXFLAGS' if '++' in x else 'CFLAGS'
 			app(prefix, x)
