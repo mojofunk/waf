@@ -7,13 +7,20 @@ from waflib.Configure import conf
 
 @conf
 def pkgconfig_check_required_deps(self, deps):
+    args = ['--cflags', '--libs']
+    if self.env.TOOLSET_MSVC:
+        args += ['--msvc-syntax']
     for pkg, version in deps.items():
-        self.check_cfg(package=pkg, atleast_version=version, mandatory=1)
-        self.check_cfg(package=pkg, args='--cflags --libs')
+        args += ['%s >= %s' % (pkg, version)]
+        self.check_cfg(package=pkg, args=args)
 
 
 @conf
 def pkgconfig_check_optional_deps(self, deps):
+    args = ['--cflags', '--libs']
+    if self.env.TOOLSET_MSVC:
+        args += ['--msvc-syntax']
     for pkg, version in deps.items():
-        self.check_cfg(package=pkg, atleast_version=version, mandatory=0)
-        self.check_cfg(package=pkg, args='--cflags --libs')
+        args += ['%s >= %s' % (pkg, version)]
+        args += ['mandatory=0']
+        self.check_cfg(package=pkg, args=args)
