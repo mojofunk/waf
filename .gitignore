@@ -4,6 +4,7 @@
 .wafpickle-*
 demos/out.txt
 waf
+wafer
 build
 demos/*/build*
 playground/*/build*
