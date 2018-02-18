@@ -8,7 +8,7 @@ from waflib.Configure import conf
 @conf
 def pkgconfig_check_required_deps(self, deps):
     args = ['--cflags', '--libs']
-    if self.env.TOOLSET_MSVC:
+    if self.env.CC_NAME == 'msvc':
         args += ['--msvc-syntax']
     for pkg, version in deps.items():
         args += ['%s >= %s' % (pkg, version)]
@@ -18,7 +18,7 @@ def pkgconfig_check_required_deps(self, deps):
 @conf
 def pkgconfig_check_optional_deps(self, deps):
     args = ['--cflags', '--libs']
-    if self.env.TOOLSET_MSVC:
+    if self.env.CC_NAME == 'msvc':
         args += ['--msvc-syntax']
     for pkg, version in deps.items():
         args += ['%s >= %s' % (pkg, version)]
