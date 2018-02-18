@@ -98,8 +98,7 @@ def before(*k):
 		exclude_taskgen.append(func.__name__)
 		setattr(task_gen, func.__name__, func)
 		for fun_name in k:
-			if not func.__name__ in task_gen.prec[fun_name]:
-				task_gen.prec[fun_name].append(func.__name__)
+			task_gen.prec[func.__name__].add(fun_name)
 		fix_fun_doc(func)
 		append_doc(func, 'before', k)
 		return func
@@ -112,8 +111,7 @@ def after(*k):
 		exclude_taskgen.append(func.__name__)
 		setattr(task_gen, func.__name__, func)
 		for fun_name in k:
-			if not fun_name in task_gen.prec[func.__name__]:
-				task_gen.prec[func.__name__].append(fun_name)
+			task_gen.prec[fun_name].add(func.__name__)
 		fix_fun_doc(func)
 		append_doc(func, 'after', k)
 		return func
@@ -333,7 +331,7 @@ f.close()
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo', 'sphinx.ext.pngmath', 'sphinx.ext.inheritance_diagram', 'sphinx.ext.graphviz', 'sphinx.ext.viewcode']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo', 'sphinx.ext.imgmath', 'sphinx.ext.inheritance_diagram', 'sphinx.ext.graphviz', 'sphinx.ext.viewcode']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -349,7 +347,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Waf'
-copyright = u'2005-2017, Thomas Nagy'
+copyright = u'2005-2018, Thomas Nagy'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -490,7 +488,7 @@ htmlhelp_basename = 'wafdoc'
 # -- Options for LaTeX output --------------------------------------------------
 
 # The paper size ('letter' or 'a4').
-latex_paper_size = 'a4'
+#latex_paper_size = 'a4'
 
 # The font size ('10pt', '11pt' or '12pt').
 #latex_font_size = '10pt'

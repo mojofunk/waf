@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-# Thomas Nagy, 2005-2016 (ita)
+# Thomas Nagy, 2005-2018 (ita)
 
 """
 
@@ -88,13 +88,13 @@ class ConfigSet(object):
 
 	def __setitem__(self, key, value):
 		"""
-		Dictionary interface: set value for key
+		Dictionary interface: set value from key
 		"""
 		self.table[key] = value
 
 	def __delitem__(self, key):
 		"""
-		Dictionary interface: mark the key as missing
+		Dictionary interface: mark the value as missing
 		"""
 		self[key] = []
 
@@ -107,7 +107,7 @@ class ConfigSet(object):
 				conf.env['value']
 		"""
 		if name in self.__slots__:
-			return object.__getattr__(self, name)
+			return object.__getattribute__(self, name)
 		else:
 			return self[name]
 

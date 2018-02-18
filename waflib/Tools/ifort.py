@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 # encoding: utf-8
 # DC 2008
-# Thomas Nagy 2016 (ita)
+# Thomas Nagy 2016-2018 (ita)
 
-import os, re
+import os, re, traceback
 from waflib import Utils, Logs, Errors
 from waflib.Tools import fc, fc_config, fc_scan, ar, ccroot
 from waflib.Configure import conf
@@ -76,7 +76,7 @@ def configure(conf):
 	Detects the Intel Fortran compilers
 	"""
 	if Utils.is_win32:
-		compiler, version, path, includes, libdirs, arch = conf.detect_ifort(True)
+		compiler, version, path, includes, libdirs, arch = conf.detect_ifort()
 		v = conf.env
 		v.DEST_CPU = arch
 		v.PATH = path
@@ -85,7 +85,7 @@ def configure(conf):
 		v.MSVC_COMPILER = compiler
 		try:
 			v.MSVC_VERSION = float(version)
-		except TypeError:
+		except ValueError:
 			v.MSVC_VERSION = float(version[:-3])
 
 		conf.find_ifort_win32()
@@ -110,16 +110,16 @@ def gather_ifort_versions(conf, versions):
 	version_pattern = re.compile('^...?.?\....?.?')
 	try:
 		all_versions = Utils.winreg.OpenKey(Utils.winreg.HKEY_LOCAL_MACHINE, 'SOFTWARE\\Wow6432node\\Intel\\Compilers\\Fortran')
-	except WindowsError:
+	except OSError:
 		try:
 			all_versions = Utils.winreg.OpenKey(Utils.winreg.HKEY_LOCAL_MACHINE, 'SOFTWARE\\Intel\\Compilers\\Fortran')
-		except WindowsError:
+		except OSError:
 			return
 	index = 0
 	while 1:
 		try:
 			version = Utils.winreg.EnumKey(all_versions, index)
-		except WindowsError:
+		except OSError:
 			break
 		index += 1
 		if not version_pattern.match(version):
@@ -134,10 +134,10 @@ def gather_ifort_versions(conf, versions):
 				Utils.winreg.OpenKey(all_versions,version+'\\'+targetDir)
 				icl_version=Utils.winreg.OpenKey(all_versions,version)
 				path,type=Utils.winreg.QueryValueEx(icl_version,'ProductDir')
-			except WindowsError:
+			except OSError:
 				pass
 			else:
-				batch_file=os.path.join(path,'bin','iclvars.bat')
+				batch_file=os.path.join(path,'bin','ifortvars.bat')
 				if os.path.isfile(batch_file):
 					targets[target] = target_compiler(conf, 'intel', arch, version, target, batch_file)
 
@@ -145,10 +145,10 @@ def gather_ifort_versions(conf, versions):
 			try:
 				icl_version = Utils.winreg.OpenKey(all_versions, version+'\\'+target)
 				path,type = Utils.winreg.QueryValueEx(icl_version,'ProductDir')
-			except WindowsError:
+			except OSError:
 				continue
 			else:
-				batch_file=os.path.join(path,'bin','iclvars.bat')
+				batch_file=os.path.join(path,'bin','ifortvars.bat')
 				if os.path.isfile(batch_file):
 					targets[target] = target_compiler(conf, 'intel', arch, version, target, batch_file)
 		major = version[0:2]
@@ -232,7 +232,7 @@ echo LIB=%%LIB%%;%%LIBPATH%%
 	try:
 		conf.cmd_and_log(fc + ['/help'], env=env)
 	except UnicodeError:
-		st = Utils.ex_stack()
+		st = traceback.format_exc()
 		if conf.logger:
 			conf.logger.error(st)
 		conf.fatal('ifort: Unicode error - check the code page?')
@@ -278,7 +278,7 @@ class target_compiler(object):
 			return
 		self.is_done = True
 		try:
-			vs = self.conf.get_msvc_version(self.compiler, self.version, self.bat_target, self.bat)
+			vs = self.conf.get_ifort_version_win32(self.compiler, self.version, self.bat_target, self.bat)
 		except Errors.ConfigurationError:
 			self.is_valid = False
 			return

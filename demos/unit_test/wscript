@@ -26,6 +26,9 @@ def configure(conf):
 	if 'dl' not in conf.env.LIB_CPPUNIT:
 		l = conf.check(lib='dl', uselib_store='CPPUNIT')
 
+	# the interpreted tests need python
+	conf.find_program('python', mandatory=False)
+
 from waflib import Logs
 def summary(bld):
 	lst = getattr(bld, 'utest_results', [])
@@ -47,7 +50,7 @@ def summary(bld):
 def build(bld):
 	bld.recurse('src tests')
 
-	# unittestw.summary is a pretty ugly function for displaying a report (feel free to improve!)
+	# waf_unit_test.summary is a pretty ugly function for displaying a report (feel free to improve!)
 	# results -> bld.utest_results [(filename, returncode, stdout, stderr), (..., ), ...]
 	#bld.add_post_fun(waf_unit_test.summary)
 	bld.add_post_fun(summary)
@@ -55,8 +58,8 @@ def build(bld):
 	# to execute all tests:
 	# $ waf --alltests
 	# to set this behaviour permanenly:
-	bld.options.all_tests = True
-	#bld.options.clear_failed_tests = True
+	#bld.options.all_tests = True
+	bld.options.clear_failed_tests = True
 
 	# debugging zone:
 	# $ waf --zones=ut
