@@ -27,6 +27,4 @@ def pkgconfig_check_optional_deps(self, deps):
 
 
 def configure(self):
-    self.env.PKG_CONFIG_LIBDIR = self.env.LIBDIR
-    if self.env.IMPLIBDIR != None:
-        self.env.PKG_CONFIG_LIBDIR = self.env.IMPLIBDIR
+    pass
