@@ -35,19 +35,20 @@ def set_msvc_compiler_flags(self):
         # produces .obj files containing full symbolic debugging information
         self.env.CFLAGS += ['/Z7']
 
-        # use ISO-standard C++ exception handling
-        self.env.CXXFLAGS += ['/EHsc']
-
         # compiler uses locks to write syncronously to PBD files, not
         # recommended, available in msvc >= 12 (2013)
         #self.env.CFLAGS += ['/FS']
 
-        self.env.LINKFLAGS += ['/DEBUG', '/INCREMENTAL:NO']
+        self.env.LINKFLAGS += ['/DEBUG']
 
     # TODO debugoptimized
     elif "optimized" in self.options.build_type:
         self.env.CFLAGS += ['/O2']
         self.env.CFLAGS += ['/MD']
+
+    # use ISO-standard C++ exception handling
+    self.env.CXXFLAGS += ['/EHsc']
+    self.env.LINKFLAGS += ['/INCREMENTAL:NO']
 
     # configure warnings
     self.env.CFLAGS += ['/W4', '/D_CRT_SECURE_NO_WARNINGS']
