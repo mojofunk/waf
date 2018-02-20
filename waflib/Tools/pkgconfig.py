@@ -22,8 +22,7 @@ def pkgconfig_check_optional_deps(self, deps):
         args += ['--msvc-syntax']
     for pkg, version in deps.items():
         args += ['%s >= %s' % (pkg, version)]
-        args += ['mandatory=0']
-        self.check_cfg(package=pkg, args=args)
+        self.check_cfg(package=pkg, args=args, mandatory=False)
 
 
 def configure(self):
