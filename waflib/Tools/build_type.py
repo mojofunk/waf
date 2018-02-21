@@ -6,16 +6,16 @@ from waflib.Configure import conf
 
 def options(self):
     self.add_option('--build-type', action = 'store',
-    default = "debug",
-    choices = ('plain', 'debug', 'debugoptimized', 'optimized'),
+    default = "release",
+    choices = ('plain', 'debug', 'releasedebug', 'release'),
     dest = 'build_type',
-    help = 'Determines the compiler flags used for the build (plain,debug,debugoptimize,optimize) [default: debug]')
+    help = 'Determines the compiler flags used for the build (plain,debug,releasedebug,release) [default: release]')
 
 @conf
 def set_gcc_compiler_flags(self):
     if "debug" in self.options.build_type:
         self.env.prepend_value('CFLAGS', ['-g'])
-    elif "optimized" in self.options.build_type:
+    if "release" in self.options.build_type:
         self.env.prepend_value('CFLAGS', ['-O2'])
     # configure warnings
     self.env.prepend_value('CFLAGS', ['-Wall', '-Wextra'])
@@ -35,14 +35,9 @@ def set_msvc_compiler_flags(self):
         # produces .obj files containing full symbolic debugging information
         self.env.CFLAGS += ['/Z7']
 
-        # compiler uses locks to write syncronously to PBD files, not
-        # recommended, available in msvc >= 12 (2013)
-        #self.env.CFLAGS += ['/FS']
-
         self.env.LINKFLAGS += ['/DEBUG']
 
-    # TODO debugoptimized
-    elif "optimized" in self.options.build_type:
+    if "release" in self.options.build_type:
         self.env.CFLAGS += ['/O2']
         self.env.CFLAGS += ['/MD']
 
