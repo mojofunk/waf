@@ -15,11 +15,11 @@ def options(self):
 def set_gcc_compiler_flags(self):
     if "debug" in self.options.build_type:
         self.env.prepend_value('CFLAGS', ['-g'])
-        self.env.prepend_value('CXXFLAGS', ['-g'])
     elif "optimized" in self.options.build_type:
         self.env.prepend_value('CFLAGS', ['-O2'])
     # configure warnings
     self.env.prepend_value('CFLAGS', ['-Wall', '-Wextra'])
+    self.env.prepend_value('CXXFLAGS', self.env.CFLAGS)
 
 @conf
 def set_msvc_compiler_flags(self):
