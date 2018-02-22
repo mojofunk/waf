@@ -63,6 +63,8 @@ def set_compiler_flags(self):
 
 
 def configure(self):
+    self.env.BUILD_TYPE=self.options.build_type
+
     if self.options.build_type == 'plain':
         return
     elif "debug" in self.options.build_type:
